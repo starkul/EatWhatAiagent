@@ -40,26 +40,11 @@ public class EatApp {
      * 初始化AI客户端
      * @param dashscopeChatModel
      */
-//    public EatApp(ChatModel dashscopeChatModel) {
-//        // 初始化基于内存的对话记忆
-//        ChatMemory chatMemory = new InMemoryChatMemory();
-//        chatClient = ChatClient.builder(dashscopeChatModel)
-//                .defaultSystem(SYSTEM_PROMPT)
-//                .defaultAdvisors(
-//                        new MessageChatMemoryAdvisor(chatMemory),
-//                        new MyLoggerAdvisor()
-//                        // 自定义推理增强 Advisor，可按需开启
-////                        new ReReadingAdvisor()
-//                )
-//                .build();
-//
-//    }
-
     public EatApp(ChatModel dashscopeChatModel) {
-        // 初始化基于文件的对话记忆
-        String fileDir = System.getProperty("user.dir") + "/tmp/chat-memory";
-        ChatMemory chatMemory = new FileBasedChatMemory(fileDir);
+        // 初始化基于内存的对话记忆
+        ChatMemory chatMemory = new InMemoryChatMemory();
         chatClient = ChatClient.builder(dashscopeChatModel)
+                .defaultSystem(SYSTEM_PROMPT)
                 .defaultAdvisors(
                         new MessageChatMemoryAdvisor(chatMemory),
                         new MyLoggerAdvisor()
@@ -67,7 +52,22 @@ public class EatApp {
 //                        new ReReadingAdvisor()
                 )
                 .build();
+
     }
+
+//    public EatApp(ChatModel dashscopeChatModel) {
+//        // 初始化基于文件的对话记忆
+//        String fileDir = System.getProperty("user.dir") + "/tmp/chat-memory";
+//        ChatMemory chatMemory = new FileBasedChatMemory(fileDir);
+//        chatClient = ChatClient.builder(dashscopeChatModel)
+//                .defaultAdvisors(
+//                        new MessageChatMemoryAdvisor(chatMemory),
+//                        new MyLoggerAdvisor()
+//                        // 自定义推理增强 Advisor，可按需开启
+////                        new ReReadingAdvisor()
+//                )
+//                .build();
+//    }
 
     /**
      * AI基础对话（多轮记忆）
@@ -106,23 +106,27 @@ public class EatApp {
         log.info("eatReport: {}", eatReport);
         return eatReport;
     }
-//
-//    public String doChatWithRag(String message, String chatId) {
-//        ChatResponse chatResponse = chatClient
-//                .prompt()
-//                .user(message)
-//                .advisors(spec -> spec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId)
-//                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
-//                // 开启日志，便于观察效果
-//                .advisors(new MyLoggerAdvisor())
-//                // 应用知识库问答
-//                .advisors(new QuestionAnswerAdvisor(eatAppVectorStore))
-//                .call()
-//                .chatResponse();
-//        String content = chatResponse.getResult().getOutput().getText();
-//        log.info("content: {}", content);
-//        return content;
-//    }
+
+    @Resource
+    private VectorStore eatAppVectorStore;
+
+    public String doChatWithRag(String message, String chatId) {
+        ChatResponse chatResponse = chatClient
+                .prompt()
+                .user(message)
+                .advisors(spec -> spec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId)
+                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
+                // 开启日志，便于观察效果
+                .advisors(new MyLoggerAdvisor())
+                // 应用知识库问答
+                .advisors(new QuestionAnswerAdvisor(eatAppVectorStore))
+                .call()
+                .chatResponse();
+        String content = chatResponse.getResult().getOutput().getText();
+        log.info("content: {}", content);
+        return content;
+    }
+
 //
 //
 //    /**

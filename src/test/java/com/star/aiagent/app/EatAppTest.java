@@ -39,4 +39,13 @@ class EatAppTest {
         Assertions.assertNotNull(eatReport);
     }
 
+    @Test
+    void doChatWithRag() {
+        String chatId = UUID.randomUUID().toString();
+        String message = "学生早饭应该吃什么？";
+        String answer =  eatApp.doChatWithRag(message, chatId);
+        Assertions.assertNotNull(answer);
+    }
+
+
 }
