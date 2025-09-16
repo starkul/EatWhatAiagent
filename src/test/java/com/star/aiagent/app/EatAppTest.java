@@ -48,4 +48,31 @@ class EatAppTest {
     }
 
 
+    @Test
+    void doChatWithTools() {
+        // 测试联网搜索问题的答案
+        testMessage("周末想带女朋友去武汉聚餐，推荐几个适合情侣的吃饭地点？");
+
+        // 测试网页抓取：恋爱案例分析
+        testMessage("这几天不知道吃什么，看看美食网站（https://www.meishichina.com/）有没有什么推荐饭菜呢？");
+
+        // 测试资源下载：图片下载
+        testMessage("直接下载一张https://ts1.tc.mm.bing.net/th/id/R-C.b3a7697d2793ba094a861d546c31190d?rik=NevOIW4XmkUuMA&riu=http%3a%2f%2fseopic.699pic.com%2fphoto%2f50069%2f5445.jpg_wh1200.jpg&ehk=wuLPicg%2b9wXz8QAwp%2fAVFBtJQ6loBUiVfQZu2bbZODA%3d&risl=&pid=ImgRaw&r=0的美食图片为文件");
+
+        // 测试终端操作：执行代码
+        testMessage("执行 Python3 脚本来生成美食分析报告");
+
+        // 测试文件操作：保存用户档案
+        testMessage("保存我的美食食谱为文件");
+
+        // 测试 PDF 生成
+        testMessage("生成一份‘今天你吃了吗’PDF，包含餐厅预订、美食推荐和口味偏好");
+    }
+
+    private void testMessage(String message) {
+        String chatId = UUID.randomUUID().toString();
+        String answer = eatApp.doChatWithTools(message, chatId);
+        Assertions.assertNotNull(answer);
+    }
+
 }
