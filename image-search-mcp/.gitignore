@@ -1,9 +1,3 @@
-####CUSTOM###
-application-local.yml
-mcp-servers.json
-src/main/java/com/star/aiagent/contant
-tmp
-
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
