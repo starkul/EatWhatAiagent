@@ -15,6 +15,7 @@ import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class EatApp {
             "情侣约会场景，询问对方喜好风格（浪漫氛围/轻松随性等）、对菜品精致度要求、有没有特别想尝试的料理类型；\n" +
             "家庭用餐场景，了解家庭成员年龄构成、大家普遍能接受的口味、有无需要照顾的饮食需求（如老人牙口、小孩辅食等）。\n" +
             "引导用户详述用餐场景细节、个人及同行人员饮食偏好、对餐食的特殊期待（如想尝试新菜品、追求健康养生等），以便给出专属美食推荐方案。\n" +
-            "每次回答尽量简洁。";
+            "每次回答尽量简洁";
     /**
      * 初始化AI客户端
      * @param dashscopeChatModel
@@ -175,6 +176,23 @@ public class EatApp {
         log.info("content: {}", content);
         return content;
     }
+
+    /**
+     * 流式输出
+     * @param message
+     * @param chatId
+     * @return
+     */
+    public Flux<String> doChatByStream(String message, String chatId) {
+        return chatClient
+                .prompt()
+                .user(message)
+                .advisors(spec -> spec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId)
+                        .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
+                .stream()
+                .content();
+    }
+
 
 
 }

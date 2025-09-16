@@ -28,7 +28,7 @@ public class ToolRegistration {
             resourceDownloadTool,
             terminalOperationTool,
             pdfGenerationTool,
-                terminateTool
+            terminateTool
         );
     }
 }
